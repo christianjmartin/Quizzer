@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Title</title>
+    <link rel="stylesheet" href="app.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class = "home-container">
+        <div class = "header-section">
+            <h1>Quizzer</h1>
+        </div>
+        <div class = "body-section">
+            <div class = "body-content">
+                <p>take a quiz now!</p>
+                <button class="button" id="start-quiz">start</button>
+            </div>
+        </div>
+        <div class = "footer-section">
+            <h1>My previous 5 attempts</h1>
+            <div class = "attempts-section">
+                <p>1</p>
+                <p>2</p>
+                <p>3</p>
+                <p>4</p>
+                <p>5</p>
+            </div>
+        </div>
+    </div>  
+</body>
+<script>
+    document.getElementById('start-quiz').addEventListener('click', function() {
+        window.location.href = 'quiz.html';
+    });
+</script>
+</html>
