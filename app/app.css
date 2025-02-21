@@ -44,13 +44,34 @@ h1 {
 .body-content {
     border: 1px solid black;
     border-radius: 10px;
-    width: 100px;
+    width: fit-content;
     padding: 20px;
     background-color: #C7ECFF;
     text-align: center;
 }
 
-.body-content p {
+.answer-section {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 15px;
+    width: 50%;
+    margin: 0 auto;
+}
+
+.answer-button {
+    padding: 15px;
+    background: none;
+    border: 1px solid black;
+    border-radius: 50px;
+    background-color: white;
+    cursor: pointer;
+}
+
+
+.body-content p, span {
     background: none;
 }
 
@@ -67,10 +88,10 @@ h1 {
 
 .attempts-section p {
     border: 1px solid black;
-    border-radius: 100px;
     padding: 10px;
     margin-left: 5px;
     margin-right: 5px;
+    cursor: pointer;
 }
 
 .button {
@@ -85,9 +106,29 @@ h1 {
     border-radius: 50px;
 }
 
+.safe {
+    background-color: #0078FF;
+}
+
+.danger {
+    background-color: red;
+}
+
 .button:hover {
     background-color: #0051AD;
 }
 
+.clicked {
+    background-color: #0078FF;
+}
+
+
+.quiz-button-section {
+    display: block;
+    flex-direction: row;
+    text-align: center;
+    align-items: center;
+    margin-top: 10px;
+}
 
 
