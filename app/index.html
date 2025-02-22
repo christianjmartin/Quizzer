@@ -19,8 +19,8 @@
             <div class = "body-content">
                 <p>take a quiz now!</p>
                 <button class="button safe" id="start-quiz">start</button>
-                <p>message from the backend: <span id="message"></span></p>
             </div>
+            <button class="button danger" id = "reset-btn">reset</button>
         </div>
         <div class = "footer-section">
             <h1>My previous 5 attempts</h1>
@@ -35,36 +35,30 @@
     </div>  
 </body>
 <script>
-    $(document).ready(function() {
-        // // remember i put this here to reset when go here 
-        // localStorage.clear();
-        const getMessage = () => {
-            $.ajax({
-                url: 'http://localhost:3000/',
-                method: 'POST',
-                contentType: 'application/json',
-                success: function(data) {
-                    $('#message').text(data);
-                },
-                error: function(error) {
-                    console.error('Error fetching message from backend:', error);
-                }
-            });
-        };
+    // if a quiz in progress, update button to "continue"
+    $(window).on('pageshow', function () {
+        const started = localStorage.getItem('started?');
+        if (started) {
+            $('.body-content button').text('continue');
+        }
+    });
 
-        const loadQuiz = () => {
-            $('#start-quiz').on('click', function() {
-                try  {
-                    window.location.href = '/quiz';
-                }
-                catch(error) {
-                    console.error('error switching pages', error);
-                }
-            });
-        };
+    // goes to quiz, marks a quiz in as "started"
+    $('#start-quiz').on('click', function() {
+        localStorage.setItem('started?', true);
+        try  {
+            window.location.href = '/quiz';
+        }
+        catch(error) {
+            console.error('error switching pages', error);
+        }
+    });
 
-        getMessage();
-        loadQuiz();
+    // clears all storage, removing any quiz and subsequent data
+    // update button to "start"
+    $('#reset-btn').on('click', function() {
+        localStorage.clear();
+        $('.body-content button').text('start');
     });
 </script>
 </html>

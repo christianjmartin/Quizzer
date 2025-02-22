@@ -139,9 +139,9 @@
     },
     {
         "id": 24,
-        "question": "Which continent is known as the 'Dark Continent'?",
-        "options": ["Asia", "Africa", "Australia", "Europe"],
-        "answer": "Africa"
+        "question": "In what year did World War II end?",
+        "options": ["1944", "1945", "1948", "1942"],
+        "answer": "1945"
     },
     {
         "id": 25,

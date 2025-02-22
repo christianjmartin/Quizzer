@@ -11,32 +11,60 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <!-- <div class="home-container"> -->
-        <p id="message"></p>
-        <div class = "body-section">
-            <h1>Question 1</h1>
-            <p>From the options below, which is a country in europe?</p>
-        </div>
-        <div class = "answer-section">
-            <button id="a" class = "answer-button">a</button>
-            <button id="b" class = "answer-button">b</button>
-            <button id="c" class = "answer-button">c</button>
-            <button id="d" class = "answer-button">d</button>
-        </div>
-        <div class = "quiz-button-section">
-            <button id = "next-btn" class="button safe">next</button>
-            <button id = "back-btn" class="button safe">back</button>
-            <button id = "reset-btn" class="button danger">reset</button>
-        </div>
-    <!-- </div> -->
+    <p id="message"></p>
+    <div class = "header-section">
+        <h1>
+            <!-- shows the question number, see corresponding header-section h1 tag in JS  -->
+        </h1>
+    </div>
+    <div class = "body-section">
+        <p>
+            <!-- shows the question details, see corresponding body-section p tag in JS -->
+        </p>
+    </div>
+    <div class = "answer-section">
+        <!-- shows the possible answers for the question, abcd placeholders for error, see corresponding id tagging (1234) in JS -->
+        <button id="0" class = "answer-button">a</button>
+        <button id="1" class = "answer-button">b</button>
+        <button id="2" class = "answer-button">c</button>
+        <button id="3" class = "answer-button">d</button>
+    </div>
+    <div class = "quiz-button-section">
+        <button id = "back-btn" class="button safe">back</button>
+        <button id = "next-btn" class="button safe">next</button>
+        <button id = "submit-btn"></button>
+    </div>
 </body>
 <script>
     let questionsArray = [];
+    let answered = {};
     let currQuestionIndex = 0;
     let currQuestion = 1;
+    let results = [];
 
+    // hit back button to the quiz, NOT allowed -> clear storage, go menu
+    $(window).on('pageshow', function (event) {
+        if (event.originalEvent.persisted) {
+            localStorage.clear();
+            $('body').css('display', 'none');
+            try  {
+                window.location.href = '/';
+            }
+            catch(error) {
+                console.error('error switching pages', error);
+            }
+        }
+    });
+
+    // gets the quiz questions and progress from storage or backend endpoint to generate
     $(document).ready(function() {
         const savedQuestions = localStorage.getItem('quizQuestions');
+        const answeredQuestions = localStorage.getItem('answered');
+        if (answeredQuestions) {
+            answered = JSON.parse(answeredQuestions);
+            $(`#${answered[currQuestionIndex]}`).addClass('clicked');
+            countAnswered();
+        }
         if (savedQuestions) {
             console.log("got from local storage");
             questionsArray = JSON.parse(savedQuestions);
@@ -44,8 +72,8 @@
         } else {
             console.log("getting from local storage");
             $.ajax({
-                url: 'http://localhost:3000/quiz',
-                method: 'POST',
+                url: 'http://localhost:3000/getQuiz',
+                method: 'GET',
                 contentType: 'application/json',
                 success: function(data) {
                     localStorage.setItem('quizQuestions', JSON.stringify(data));
@@ -59,44 +87,88 @@
         }
     });
 
+    // snagging html elements for displaying questions
     function displayQuestions() {
         const question = questionsArray[currQuestionIndex];
-        $('.body-section h1').text(`Question ${currQuestion}`);
+        $('.header-section h1').text(`Question ${currQuestion}`);
         $('.body-section p').text(question.question);
-        $('#a').text(question.options?.[0] || "N/A");
-        $('#b').text(question.options?.[1] || "N/A");
-        $('#c').text(question.options?.[2] || "N/A");
-        $('#d').text(question.options?.[3] || "N/A");
+        $('#0').text(question.options?.[0] || "N/A");
+        $('#1').text(question.options?.[1] || "N/A");
+        $('#2').text(question.options?.[2] || "N/A");
+        $('#3').text(question.options?.[3] || "N/A");
     };
 
-    $('#reset-btn').on('click', function() {
-        localStorage.removeItem('quizQuestions');
-        location.reload();
-    });
+    // determines whether quiz is complete, rendering submit but if so
+    function countAnswered() {
+        let counter = 0;
+        for (let i = 0; i < 10; i++) {
+            if (answered[i] != null) {
+                counter++;
+            }
+        }
+        console.log(counter);
+        if (counter === 10) {
+            $('#submit-btn').addClass('button safe').text('Submit');
+        } else {  $('#submit-btn').removeClass('button safe').text(''); }
+    }
 
+
+    // next question
     $('#next-btn').on('click', function() {
         if (currQuestion < 10) {
             currQuestion++;
             currQuestionIndex++;
-            clicked = false;
+            $('.answer-button').removeClass('clicked');
+            $(`#${answered[currQuestionIndex]}`).addClass('clicked');
             displayQuestions();
         }
     });
 
-    $('.answer-button').on('click', function() {
-        $('.answer-button').not(this).removeClass('clicked');
-        $(this).hasClass('clicked') ? $(this).removeClass('clicked') : $(this).addClass('clicked');
-        const selectedOptionIndex = $(this).index();
-        console.log("answer for question", currQuestion, "is", selectedOptionIndex);
-    });
-
+    // previous question 
     $('#back-btn').on('click', function() {
         if (currQuestion > 1) {
             currQuestion--;
             currQuestionIndex--;
+            $('.answer-button').removeClass('clicked');
+            $(`#${answered[currQuestionIndex]}`).addClass('clicked');
             displayQuestions();
         }
     });
+
+    // adds clicked class to current selection
+    // updates DS of selections
+    // identifies if all questions answered
+    $('.answer-button').on('click', function() {
+        $('.answer-button').not(this).removeClass('clicked');
+        if ($(this).hasClass('clicked')) {
+            $(this).removeClass('clicked');
+            answered[currQuestionIndex] = null;
+            localStorage.setItem('answered', JSON.stringify(answered));
+        }
+        else {
+            $(this).addClass('clicked');
+            const selectedOptionIndex = $(this).index();
+            answered[currQuestionIndex] = selectedOptionIndex;
+            localStorage.setItem('answered', JSON.stringify(answered));
+            console.log("answer for question", currQuestion, "is", selectedOptionIndex);
+        }
+        countAnswered();
+        console.log(answered);
+    });
+
+    // goes to results page
+    // submission handled on launch of /results
+    $('#submit-btn').on('click', function() {
+        try {
+            window.location.href = '/results';
+        }
+        catch(error) {
+            console.error("error switching pages", error);
+        }
+    });
+
+    
+
 
 
 

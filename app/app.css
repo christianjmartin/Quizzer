@@ -48,6 +48,11 @@ h1 {
     padding: 20px;
     background-color: #C7ECFF;
     text-align: center;
+    width: 250px;
+}
+
+.body-content p {
+    margin-bottom: 15px;
 }
 
 .answer-section {
@@ -59,6 +64,7 @@ h1 {
     grid-gap: 15px;
     width: 50%;
     margin: 0 auto;
+    margin-top: 15px;
 }
 
 .answer-button {
@@ -110,13 +116,18 @@ h1 {
     background-color: #0078FF;
 }
 
+.safe:hover {
+    background-color: #0051AD;
+}
+
 .danger {
     background-color: red;
 }
 
-.button:hover {
-    background-color: #0051AD;
+.danger:hover {
+    background-color: #D00000;
 }
+
 
 .clicked {
     background-color: #0078FF;
@@ -130,5 +141,43 @@ h1 {
     align-items: center;
     margin-top: 10px;
 }
+
+.exit-button {
+    border: none;
+    cursor: pointer;
+    font-size: larger;
+    color: red;
+}
+
+.exit-button-container {
+    position: absolute;
+    top: 7px;
+    left: 270px;
+    background: none;
+    cursor: pointer;
+}
+
+.results-section {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0 auto;
+    width: 500px;
+}
+.results-content {
+    border: 1px solid black;
+    border-radius: 10px;
+    width: 100%;
+    padding: 20px;
+    background-color: #C7ECFF;
+    text-align: center;
+}
+
+.results-content p {
+    background: none;
+}
+
+
 
 

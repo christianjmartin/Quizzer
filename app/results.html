@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Title</title>
+    <link rel="stylesheet" href="app.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+        <div class = "header-section">
+            <h1>Results</h1>
+        </div>
+        <div id="results-section" class="results-section">
+             <!-- dynamically updated results  -->
+             <!-- see htmlContent object in JS -->
+        </div>
+</body>
+<script>
+    let questionsArray = [];
+    let answered = {};
+
+    // gets the results from the quiz and displays for the user
+    // saves in database 
+    // clears from storage so they can't go back to the quiz after submission
+    $(document).ready(function() {
+        let score = 0;
+        const savedQuestions = localStorage.getItem('quizQuestions');
+        const answeredQuestions = localStorage.getItem('answered');
+        if (savedQuestions && answeredQuestions) {
+            try {
+                if (savedQuestions && answeredQuestions) {
+                    questionsArray = JSON.parse(savedQuestions);
+                    answered = JSON.parse(answeredQuestions);
+                    let htmlContent = '';
+                    // for each question do...
+                    for (let i = 0; i < 10; i++) {
+                        // count number of correct answers
+                        if (questionsArray[i].options.indexOf(questionsArray[i].answer) === answered[i]) {
+                            score++;
+                        }
+                        // creates HTML for -> displaying question, actual answer, expected answer
+                        htmlContent += 
+                            `<div class = 'results-content'>
+                                <p style="color: red">correct or incorrect??</p>
+                                <p id="${i}">Question ${i+1}: ${questionsArray[i].question}</p>
+                                <p id="${i}${i}">Your Answer: ${questionsArray[i].options[answered[i]]}</p>
+                                <p id="${i}${i}${i}">Correct Answer: ${questionsArray[i].answer}</p>
+                            </div>`
+                    }
+                    $('.header-section h1').text(`You scored ${score * 10}%`)
+                    $('#results-section').html(htmlContent); 
+                }   
+            }
+            catch (error) {
+                console.error("error fetching data, fatal", error);
+            }
+            finally {
+                processResultsToDatabase(score);
+                /*
+                TODO:   localStorage.clear(); necessary cuz user could change 
+                        answers by manually entering quiz URL...
+                        BUT then this page doesn't survive refresh
+                        - can make a copy of the items needed from storage and 
+                        .remove() the important ones initially.
+                */
+                localStorage.clear();
+            }
+        }
+        else {
+            $('.header-section h1').text(`Error fetching your score results`)
+        }
+    })
+
+    // sends the score to backend for insert: this quiz -> quiz table
+    function processResultsToDatabase(score) {
+        $.ajax({
+            url: 'http://localhost:3000/results',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({numCorrect: score}),
+            success: {},
+            error: function(error) {
+                console.log("error sending to backend", error);
+            }
+        });
+    }
+</script>
+</html>
