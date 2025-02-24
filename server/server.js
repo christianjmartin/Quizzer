@@ -1,15 +1,39 @@
 const express = require('express');
 const path = require('path');
+const sql = require('mssql');
 const fs = require('fs').promises;
 const app = express();
 const PORT = 3000;
+const { CONFIG } = require('../config.js'); 
 
 app.use(express.json())
 app.use(express.static(path.join(__dirname, '..', 'app')));
 
+const config = {
+    user: 'sa',
+    password: CONFIG.DB,
+    server: 'localhost',
+    port: 1433,
+    database: 'QuizzerDatabase',
+    options: {
+      encrypt: true,
+      trustServerCertificate: true,
+    },
+  };
+  
+  sql.connect(config)
+    .then(() => console.log('Connected to SQL Server'))
+    .catch(err => console.error('Connection failed:', err));
+
 // load home page
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'app', 'index.html'));
+});
+
+app.get('/recent5', (req, res) => {
+    /*
+    TODO: get the recent 5 quiz scores from the user 
+    */
 });
 
 // load quiz page
