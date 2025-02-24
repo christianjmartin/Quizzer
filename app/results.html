@@ -67,7 +67,9 @@
                         - can make a copy of the items needed from storage and 
                         .remove() the important ones initially.
                 */
-                localStorage.clear();
+                localStorage.removeItem('started?');
+                localStorage.removeItem('quizQuestions');
+                localStorage.removeItem('answered');
             }
         }
         else {

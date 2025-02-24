@@ -57,7 +57,9 @@
     // clears all storage, removing any quiz and subsequent data
     // update button to "start"
     $('#reset-btn').on('click', function() {
-        localStorage.clear();
+        localStorage.removeItem('started?');
+        localStorage.removeItem('quizQuestions');
+        localStorage.removeItem('answered');
         $('.body-content button').text('start');
     });
 </script>

@@ -45,7 +45,9 @@
     // hit back button to the quiz, NOT allowed -> clear storage, go menu
     $(window).on('pageshow', function (event) {
         if (event.originalEvent.persisted) {
-            localStorage.clear();
+            localStorage.removeItem('started?');
+            localStorage.removeItem('quizQuestions');
+            localStorage.removeItem('answered');
             $('body').css('display', 'none');
             try  {
                 window.location.href = '/';
